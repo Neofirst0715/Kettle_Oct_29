@@ -4,7 +4,8 @@ import datetime as dt
 import sys
 from backend.parsing import build_people, classify
 
-D = "/mnt/user-data/uploads/"
+import pathlib
+D = str(pathlib.Path(__file__).resolve().parent.parent / "samples" / "sep21-oct17") + "/"
 run = dt.date(2026, 10, 21)
 wl = list(csv.DictReader(open(D + "waitlist-2026-10-21.csv", encoding="utf-8")))
 ap = list(csv.DictReader(open(D + "appointments-2026-09-21-to-2026-10-17.csv", encoding="utf-8")))
