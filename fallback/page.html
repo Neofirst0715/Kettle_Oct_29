@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:;">
+<title>Late openings, who to call</title>
+<style>
+:root{--bg:#f7f3ec;--card:#fffdf9;--ink:#26302c;--mut:#7a837e;--line:#e9e2d4;--acc:#35665a;--accbg:#e6efe9;--warm:#b96a3b;--warmbg:#f8e9dc;--bad:#a1302e}
+@media(prefers-color-scheme:dark){:root{--bg:#141817;--card:#1c2220;--ink:#ebefec;--mut:#8d9993;--line:#2c3532;--acc:#7cc4b0;--accbg:#22322d;--warm:#e3a070;--warmbg:#352a21;--bad:#e27a77}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+header{max-width:1000px;margin:0 auto;padding:28px 20px 12px;display:flex;gap:16px;justify-content:space-between;align-items:flex-end;flex-wrap:wrap}
+h1{font-size:1.5rem;font-weight:650;margin:0;letter-spacing:-.01em}
+.lead{color:var(--mut);margin:4px 0 0;font-size:.92rem}.lead b{color:var(--ink);font-weight:650}
+.setup-mode header{max-width:640px}
+.noscript{max-width:1000px;margin:0 auto 16px;padding:12px 20px;color:var(--bad)}
+/* setup */
+#setup{max-width:640px;margin:0 auto;padding:8px 20px 64px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:14px}
+.step{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin:0 0 6px}
+#drop{display:block;border:2px dashed var(--line);border-radius:14px;padding:26px 16px;text-align:center;cursor:pointer;color:var(--mut)}
+#drop.over{border-color:var(--acc);background:var(--accbg)}
+#drop b{color:var(--ink);display:block;font-size:1.05rem;margin-bottom:2px}
+#pick{position:absolute;opacity:0;pointer-events:none}
+#files{list-style:none;margin:14px 0 0;padding:0;font-size:.92rem}
+#files li{display:grid;grid-template-columns:22px auto 1fr;gap:8px;padding:6px 0;border-top:1px solid var(--line)}
+#files .mk{font-weight:650;color:var(--mut)}#files .got .mk{color:var(--acc)}
+#files .fn{color:var(--mut);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#files .opt .k{color:var(--mut)}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+input[type=date]{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.hint{color:var(--mut);font-size:.84rem;margin:8px 0 0}
+.primary{border:0;background:var(--acc);color:var(--bg);padding:11px 22px;border-radius:999px;font-weight:650;cursor:pointer}
+.primary:disabled{opacity:.4;cursor:default}
+.ghost{border:1px solid var(--line);background:transparent;padding:7px 14px;border-radius:999px;cursor:pointer;font-size:.88rem}
+.msg{border-radius:12px;padding:10px 14px;font-size:.9rem;margin-bottom:14px}.msg.warn{background:var(--warmbg);color:var(--warm)}.msg.ok{background:var(--accbg);color:var(--acc)}
+.privacy{color:var(--mut);font-size:.84rem;text-align:center;margin-top:18px}
+/* results */
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;background:var(--card);padding:3px}
+.seg button{border:0;background:transparent;padding:5px 14px;border-radius:999px;font-size:.88rem;cursor:pointer;color:var(--mut)}
+.seg button.on{background:var(--acc);color:var(--bg)}
+.segcap{font-size:.75rem;color:var(--mut);margin:0 0 4px 4px}
+.app{max-width:1000px;margin:0 auto;padding:8px 20px 40px;display:grid;grid-template-columns:250px 1fr;gap:20px;align-items:start}
+.list{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px;max-height:80vh;overflow:auto;position:sticky;top:12px}
+.day{font-size:.72rem;color:var(--mut);padding:10px 10px 4px;text-transform:uppercase;letter-spacing:.04em}
+.item{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;padding:8px 10px;border-radius:10px;cursor:pointer}
+.item:hover{background:var(--accbg)}.item.on{background:var(--acc);color:var(--bg)}
+.item .t{font-weight:650;min-width:3.4em;font-variant-numeric:tabular-nums}
+.item .th{flex:1;font-size:.86rem;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .n{font-size:.76rem;min-width:1.7em;text-align:center;padding:1px 6px;border-radius:999px;background:var(--accbg);color:var(--acc);font-weight:650}
+.item .n.z{background:transparent;color:var(--mut);font-weight:400}
+.item.on .n{background:rgba(255,255,255,.2);color:inherit}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+.panel h2{margin:0;font-size:1.3rem;font-weight:650;letter-spacing:-.01em}
+.meta{color:var(--mut);font-size:.88rem;margin-top:2px}
+.funnel{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0 20px;color:var(--mut);font-size:.84rem}
+.funnel b{color:var(--ink);font-weight:650}.funnel .arrow{opacity:.6}
+.rule{background:var(--bg);border-radius:12px;padding:10px 14px;font-size:.86rem;color:var(--mut);margin-bottom:12px}.rule b{color:var(--ink)}
+.p{display:grid;grid-template-columns:34px 1fr auto;gap:2px 12px;align-items:center;padding:12px 14px;border-radius:12px;margin-bottom:8px;border:1px solid var(--line)}
+.p.now{background:var(--accbg);border-color:var(--acc)}
+.p.later{opacity:.6}.p.skipped{opacity:.4}.p.skipped .nm,.p.skipped .ph{text-decoration:line-through}
+.rk{width:28px;height:28px;border-radius:50%;background:var(--card);color:var(--acc);font-weight:650;display:grid;place-items:center;font-size:.85rem}
+.lab{grid-column:1/4;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--acc);font-weight:650;display:none}
+.p.now .lab{display:block}
+.nm{font-weight:650;font-size:1.1rem}.p.now .nm{font-size:1.3rem}
+.ph{font-size:1.05rem;font-variant-numeric:tabular-nums}.p.now .ph{font-size:1.3rem;font-weight:650}
+.sub{grid-column:2/4;color:var(--mut);font-size:.82rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tag{padding:0 9px;border-radius:999px;background:var(--warmbg);color:var(--warm);font-size:.76rem}
+.chks{grid-column:2/4;list-style:none;margin:6px 0 0;padding:0;font-size:.84rem;display:grid;gap:2px}
+.chks li{display:grid;grid-template-columns:16px 76px 1fr auto;gap:6px}
+.ck{color:var(--acc);font-weight:650}.w,.got{color:var(--mut)}
+.btns{grid-column:2/4;display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.btns button{font-size:.86rem;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.btns button.go{background:var(--acc);border-color:var(--acc);color:var(--bg)}
+.done-msg{background:var(--accbg);border:1px solid var(--acc);border-radius:12px;padding:12px 14px;margin-bottom:8px;font-weight:650}
+.done-msg.warn{background:var(--warmbg);border-color:var(--warm);color:var(--warm)}
+.link{border:0;background:none;text-decoration:underline;cursor:pointer;font-weight:400;font-size:.88rem;color:inherit}
+.none{padding:14px;border:1px solid var(--line);border-radius:12px;color:var(--mut)}
+.more{color:var(--mut);font-size:.84rem;margin:4px 2px 0}
+.chk{margin-top:14px;font-size:.82rem;color:var(--acc)}.chk.miss{color:var(--bad)}
+.foot{max-width:1000px;margin:0 auto;padding:0 20px 48px}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 18px;margin-top:10px}
+summary{cursor:pointer;font-weight:650}details p{color:var(--mut);font-size:.88rem;margin:6px 0}li{font-size:.92rem}
+.panel details{background:transparent}
+@media(max-width:760px){.app{grid-template-columns:1fr}.list{position:static;max-height:240px}.chks li{grid-template-columns:16px 70px 1fr}.chks .got{grid-column:3}}
+</style>
+</head>
+<body class="setup-mode">
+<header><div><h1>Late openings: who to call</h1>
+<p class="lead" id="lead">Kettle &amp; Stone · runs on this computer only. Nothing is sent anywhere.</p></div></header>
+<noscript><p class="noscript">This page needs a normal web browser such as Chrome or Edge, with scripts allowed.</p></noscript>
+
+<main id="setup">
+  <div id="msg" class="msg" hidden></div>
+  <div class="card">
+    <p class="step">1 · This week's files</p>
+    <label id="drop" for="pick"><b>Drop the files here, or click to choose</b>Late openings, waitlist and booking export. You can pick them all at once.</label>
+    <input id="pick" type="file" accept=".csv,text/csv" multiple>
+    <ul id="files"></ul>
+  </div>
+  <div class="card">
+    <p class="step">2 · Day of use</p>
+    <div class="row"><input id="today" type="date"><span class="hint">Who is out of date is counted from this day.</span></div>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <button id="go" class="primary" disabled>Show who to call</button>
+    <button id="sampleBtn" class="ghost">Try it with the sample files</button>
+  </div>
+  <p class="privacy">The files are read inside this browser tab and are gone when you close it. The page cannot connect to the internet.</p>
+</main>
+
+<div id="results" hidden>
+  <div class="app" style="padding-bottom:8px">
+    <div class="bar" style="grid-column:1/3;justify-content:space-between">
+      <div class="bar"><button id="back" class="ghost">← Load other files</button><button id="logBtn" class="ghost">Download run log</button></div>
+      <div><p class="segcap">Who gets the first call</p><div class="seg"><button data-order="asked" class="on">Asked first</button><button data-order="fast">Fastest to arrive</button></div></div>
+    </div>
+  </div>
+  <div class="app"><nav class="list" id="list"></nav><section class="panel" id="panel"></section></div>
+  <div class="foot">
+    <details><summary>Needs a look before use (<span id="reviewN">0</span>)</summary><p>Notes the rules could not read. These people are never shown until someone checks.</p><ul id="review"></ul></details>
+    <details><summary>Taken off the list (<span id="oldN">0</span>)</summary><ul id="old"></ul></details>
+  </div>
+</div>
+<!--SAMPLE-->
+<!--ENGINE-->
+<!--APP-->
+</body>
+</html>

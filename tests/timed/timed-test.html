@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline';">
+<title>Timed test</title>
+<style>
+:root{--bg:#f7f3ec;--card:#fffdf9;--ink:#26302c;--mut:#7a837e;--line:#e9e2d4;--acc:#35665a;--accbg:#e6efe9;--warm:#b96a3b;--warmbg:#f8e9dc;--bad:#a1302e}
+@media(prefers-color-scheme:dark){:root{--bg:#141817;--card:#1c2220;--ink:#ebefec;--mut:#8d9993;--line:#2c3532;--acc:#7cc4b0;--accbg:#22322d;--warm:#e3a070;--warmbg:#352a21;--bad:#e27a77}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}h2{font-size:1.15rem;margin:0 0 8px}
+.mut{color:var(--mut)}.small{font-size:.86rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:14px 0}
+button{font:inherit;cursor:pointer}
+.primary{border:0;background:var(--acc);color:var(--bg);padding:10px 22px;border-radius:999px;font-weight:650}
+.ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.clock{font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:650;min-width:4.5em}
+.op{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline}
+.op .big{font-size:1.5rem;font-weight:650}
+.answer{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.answer input{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:10px;min-width:280px;background:var(--bg);color:var(--ink)}
+.rules{background:var(--bg);border-radius:12px;padding:10px 14px;font-size:.86rem;color:var(--mut)}
+.rules b{color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;position:sticky;top:0;background:var(--card)}
+.book{max-height:58vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.p{display:grid;grid-template-columns:34px 1fr auto;gap:2px 12px;align-items:center;padding:12px 14px;border-radius:12px;margin-bottom:8px;border:1px solid var(--line)}
+.p.now{background:var(--accbg);border-color:var(--acc)}.p.later{opacity:.6}
+.rk{width:28px;height:28px;border-radius:50%;background:var(--card);color:var(--acc);font-weight:650;display:grid;place-items:center}
+.lab{grid-column:1/4;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--acc);font-weight:650}
+.nm{font-weight:650;font-size:1.15rem}.ph{font-variant-numeric:tabular-nums}
+.chks{grid-column:2/4;list-style:none;margin:4px 0 0;padding:0;font-size:.84rem;color:var(--mut)}
+.none{padding:14px;border:1px solid var(--line);border-radius:12px;color:var(--mut)}
+.ok{color:var(--acc);font-weight:650}.no{color:var(--bad);font-weight:650}
+textarea{width:100%;min-height:180px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+pre{white-space:pre-wrap;background:var(--bg);padding:12px;border-radius:12px;font-size:.84rem}
+</style>
+</head>
+<body>
+<main id="app"><noscript>This page needs Chrome or Edge with scripts allowed.</noscript></main>
+<script>
+const D = {"seed": 20261029, "rounds": {"1": [{"id": "O40", "category": "Nobody fits", "when": "Thu Oct 15, 16:00", "length": 60, "therapist": "Rachel Thibodeau", "cancelled": "Thu Oct 15, 2:43 PM", "notice_h": 1.3, "tool": {"shown": [], "funnel": {"total": 45, "waiting": 30, "fit": 0, "shown": 0}}, "tanya": []}, {"id": "O32", "category": "Only 1–2 people fit", "when": "Fri Oct 9, 13:45", "length": 60, "therapist": "Rachel Thibodeau", "cancelled": "Fri Oct 9, 6:50 AM", "notice_h": 6.9, "tool": {"shown": [{"name": "Amanda Bourgeois", "phone": "506-555-0125", "reason": "Asked first: waiting since Sep 11 (rank 1 of 2) · needs 2 h notice, this one has 6.9 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Josée or Rachel", "Rachel", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "6.9 h", true]]}, {"name": "Andrea Pitre", "phone": "506-555-0141", "reason": "Asked first: waiting since Oct 6 (rank 2 of 2) · needs 4 h notice, this one has 6.9 h", "look_first": false, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Rachel", false], ["Day", "only Wed/Fri", "Fri", false], ["Length", "45 min", "60 min", false], ["Notice", "4 h", "6.9 h", false]]}], "funnel": {"total": 45, "waiting": 30, "fit": 2, "shown": 2}}, "tanya": ["Amanda Bourgeois", "Andrea Pitre"]}, {"id": "O42", "category": "Many people fit", "when": "Fri Oct 16, 14:15", "length": 60, "therapist": "Kelsey Babineau", "cancelled": "Fri Oct 16, 9:12 AM", "notice_h": 5.0, "tool": {"shown": [{"name": "Sarah Collette", "phone": "506-555-0109", "reason": "Asked first: waiting since Aug 24 (rank 1 of 5) · needs 2 h notice, this one has 5.0 h", "look_first": false, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Kelsey", false], ["Day", "only Mon/Tue/Wed/Thu/Fri", "Fri", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "5.0 h", true]]}, {"name": "Luc Bernard", "phone": "506-555-0121", "reason": "Asked first: waiting since Sep 7 (rank 2 of 5) · needs 2 h notice, this one has 5.0 h", "look_first": false, "text_only": false, "checks": [["Therapist", "any", "Kelsey", false], ["Day", "not Sat", "Fri", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "5.0 h", true], ["Available", "from Oct 10", "Oct 16", false]]}, {"name": "Vanessa Caissie", "phone": "506-555-0136", "reason": "Asked first: waiting since Sep 29 (rank 3 of 5) · needs 3 h notice, this one has 5.0 h", "look_first": false, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Kelsey", false], ["Length", "60 min (assumed)", "60 min", true], ["Notice", "3 h", "5.0 h", false]]}], "funnel": {"total": 45, "waiting": 30, "fit": 5, "shown": 3}}, "tanya": ["Sarah Collette", "Vanessa Caissie", "Andrea Pitre", "Hélène Surette", "Luc Bernard"]}, {"id": "O41", "category": "A clinic therapist rule applies", "when": "Fri Oct 16, 12:00", "length": 60, "therapist": "Dave Melanson", "cancelled": "Fri Oct 16, 5:30 AM", "notice_h": 6.5, "tool": {"shown": [{"name": "Luc Bernard", "phone": "506-555-0121", "reason": "Asked first: waiting since Sep 7 (rank 1 of 4) · needs 2 h notice, this one has 6.5 h", "look_first": false, "text_only": false, "checks": [["Therapist", "any", "Dave", false], ["Day", "not Sat", "Fri", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "6.5 h", true], ["Available", "from Oct 10", "Oct 16", false]]}, {"name": "Joel Bertin", "phone": "506-555-0135", "reason": "Asked first: waiting since Sep 28 (rank 2 of 4) · needs 0.5 h notice, this one has 6.5 h", "look_first": false, "text_only": false, "checks": [["Therapist", "any", "Dave", false], ["Time", "from 12:00 pm, before 1:01 pm", "12:00 pm (60 min)", false], ["Length", "30 or 45 min", "60 min", false], ["Notice", "30 min", "6.5 h", false]]}, {"name": "Shawn Duguay", "phone": "506-555-0140", "reason": "Asked first: waiting since Oct 3 (rank 3 of 4) · needs 2 h notice, this one has 6.5 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Dave or Marc", "Dave", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "6.5 h", true]]}], "funnel": {"total": 45, "waiting": 30, "fit": 4, "shown": 3}}, "tanya": ["Joël Bertin", "Shawn Duguay", "Luc Bernard", "Lise Gautreau"]}, {"id": "O12", "category": "A Josée opening", "when": "Mon Sep 28, 11:30", "length": 60, "therapist": "Josée Landry", "cancelled": "Sun Sep 27, 9:58 PM", "notice_h": 13.5, "tool": {"shown": [{"name": "Pauline Bastarache", "phone": "506 555 0102", "reason": "Asked first: waiting since Jul 14 (rank 1 of 6) · needs 2 h notice, this one has 13.5 h", "look_first": true, "text_only": false, "checks": [["Therapist", "any", "Josée", false], ["Day", "only Mon/Wed", "Mon", false], ["Time", "before 12:00 pm", "11:30 am (60 min)", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "13.5 h", true]]}, {"name": "Chantal Maltais", "phone": "(506)555-0113", "reason": "Asked first: waiting since Aug 29 (rank 2 of 6) · needs 3 h notice, this one has 13.5 h", "look_first": true, "text_only": false, "checks": [["Therapist", "only Josée", "Josée", false], ["Length", "45 or 60 min", "60 min", false], ["Notice", "3 h", "13.5 h", false]]}, {"name": "Carole Mazerolle", "phone": "506-555-0115", "reason": "Asked first: waiting since Aug 31 (rank 3 of 6) · needs 2 h notice, this one has 13.5 h", "look_first": true, "text_only": false, "checks": [["Therapist", "only Josée or Rachel", "Josée", false], ["Time", "before 12:00 pm", "11:30 am (60 min)", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "13.5 h", true]]}], "funnel": {"total": 45, "waiting": 30, "fit": 6, "shown": 3}}, "tanya": ["Chantal Maltais", "Amanda Bourgeois", "Nicole Vautour", "Carole Mazerolle", "Pauline Bastarache", "Mireille Cole"]}], "2": [{"id": "O11", "category": "A Josée opening", "when": "Fri Sep 25, 13:15", "length": 60, "therapist": "Josée Landry", "cancelled": "Fri Sep 25, 12:31 AM", "notice_h": 12.7, "tool": {"shown": [{"name": "Chantal Maltais", "phone": "(506)555-0113", "reason": "Asked first: waiting since Aug 29 (rank 1 of 5) · needs 3 h notice, this one has 12.7 h", "look_first": true, "text_only": false, "checks": [["Therapist", "only Josée", "Josée", false], ["Length", "45 or 60 min", "60 min", false], ["Notice", "3 h", "12.7 h", false]]}, {"name": "Amanda Bourgeois", "phone": "506-555-0125", "reason": "Asked first: waiting since Sep 11 (rank 2 of 5) · needs 2 h notice, this one has 12.7 h", "look_first": true, "text_only": false, "checks": [["Therapist", "only Josée or Rachel", "Josée", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "12.7 h", true]]}, {"name": "Andrea Pitre", "phone": "506-555-0141", "reason": "Asked first: waiting since Oct 6 (rank 3 of 5) · needs 4 h notice, this one has 12.7 h", "look_first": true, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Josée", false], ["Day", "only Wed/Fri", "Fri", false], ["Length", "45 min", "60 min", false], ["Notice", "4 h", "12.7 h", false]]}], "funnel": {"total": 45, "waiting": 30, "fit": 5, "shown": 3}}, "tanya": ["Chantal Maltais", "Amanda Bourgeois", "Andrea Pitre", "Hélène Surette", "Lise Gautreau"]}, {"id": "O30", "category": "Only 1–2 people fit", "when": "Thu Oct 8, 11:00", "length": 60, "therapist": "Dave Melanson", "cancelled": "Thu Oct 8, 3:00 AM", "notice_h": 8.0, "tool": {"shown": [{"name": "Shawn Duguay", "phone": "506-555-0140", "reason": "Asked first: waiting since Oct 3 (rank 1 of 1) · needs 2 h notice, this one has 8.0 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Dave or Marc", "Dave", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "8.0 h", true]]}], "funnel": {"total": 45, "waiting": 30, "fit": 1, "shown": 1}}, "tanya": ["Shawn Duguay"]}, {"id": "O24", "category": "Many people fit", "when": "Mon Oct 5, 14:45", "length": 60, "therapist": "Amira Haddad", "cancelled": "Mon Oct 5, 12:59 AM", "notice_h": 13.8, "tool": {"shown": [{"name": "Lorraine Johnson", "phone": "506-555-0106", "reason": "Asked first: waiting since Aug 10 (rank 1 of 5) · needs 2 h notice, this one has 13.8 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Amira", "Amira", false], ["Day", "only Mon/Tue", "Mon", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "13.8 h", true]]}, {"name": "Sarah Collette", "phone": "506-555-0109", "reason": "Asked first: waiting since Aug 24 (rank 2 of 5) · needs 2 h notice, this one has 13.8 h", "look_first": false, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Amira", false], ["Day", "only Mon/Tue/Wed/Thu/Fri", "Mon", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "13.8 h", true]]}, {"name": "Monique Hache", "phone": "506-555-0132", "reason": "Asked first: waiting since Sep 22 (rank 3 of 5) · needs 2 h notice, this one has 13.8 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Amira", "Amira", false], ["Time", "from 10:00 am", "2:45 pm (60 min)", false], ["Length", "45 min", "60 min", false], ["Notice", "2 h (assumed)", "13.8 h", true]]}], "funnel": {"total": 45, "waiting": 30, "fit": 5, "shown": 3}}, "tanya": ["Sarah Collette", "Monique Haché", "Vanessa Caissie", "Nicole Vautour", "Lorraine Johnson"]}, {"id": "O31", "category": "Nobody fits", "when": "Thu Oct 8, 15:15", "length": 60, "therapist": "Dave Melanson", "cancelled": "Thu Oct 8, 2:01 PM", "notice_h": 1.2, "tool": {"shown": [], "funnel": {"total": 45, "waiting": 30, "fit": 0, "shown": 0}}, "tanya": []}, {"id": "O18", "category": "A clinic therapist rule applies", "when": "Thu Oct 1, 16:30", "length": 60, "therapist": "Rachel Thibodeau", "cancelled": "Thu Oct 1, 9:09 AM", "notice_h": 7.3, "tool": {"shown": [{"name": "Ginette Losier", "phone": "506-555-0119", "reason": "Asked first: waiting since Sep 4 (rank 1 of 2) · needs 2 h notice, this one has 7.3 h", "look_first": false, "text_only": false, "checks": [["Therapist", "clinic therapist rule", "Rachel", false], ["Day", "only Tue/Thu", "Thu", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "7.3 h", true]]}, {"name": "Amanda Bourgeois", "phone": "506-555-0125", "reason": "Asked first: waiting since Sep 11 (rank 2 of 2) · needs 2 h notice, this one has 7.3 h", "look_first": false, "text_only": false, "checks": [["Therapist", "only Josée or Rachel", "Rachel", false], ["Length", "60 min", "60 min", false], ["Notice", "2 h (assumed)", "7.3 h", true]]}], "funnel": {"total": 45, "waiting": 30, "fit": 2, "shown": 2}}, "tanya": ["Ginette Losier", "Amanda Bourgeois"]}]}, "book": [{"line": "1", "added": "Jul 6", "name": "Gisele Maillet", "phone": "506-555-0101", "notes": "90 - any - sciatica, L side"}, {"line": "2", "added": "7/14", "name": "Pauline Bastarache", "phone": "506 555 0102", "notes": "any - 1hr - AM"}, {"line": "3", "added": "Jul 20", "name": "Terry Hebert", "phone": "(506) 555-0103", "notes": "Dave only - after 5 - landline"}, {"line": "4", "added": "7/27", "name": "Normand Vienneau", "phone": "506-555-0104", "notes": "Dave only. 90. low back, bad"}, {"line": "5", "added": "Aug 4", "name": "Lynn Savoie", "phone": "5065550105", "notes": "J only - knee replacement June - 45"}, {"line": "6", "added": "8/10", "name": "Lorraine Johnson", "phone": "506-555-0106", "notes": "Amira - 1hr - Mon"}, {"line": "7", "added": "Aug 11", "name": "Lynn S.", "phone": "same #", "notes": "again - 45 or 60"}, {"line": "8", "added": "8/15", "name": "Ray Daigle", "phone": "506-555-0107", "notes": "any - 30 - lunch"}, {"line": "9", "added": "Aug 22", "name": "Claudette Richard", "phone": "506-555-0108", "notes": "Josée or Rachel - 90 - low back"}, {"line": "10", "added": "8/24", "name": "Sarah Collette", "phone": "506-555-0109", "notes": "pregnant, 2nd tri - female - 60 - wkdays"}, {"line": "11", "added": "Aug 25", "name": "Heather Doucet", "phone": "506 555 0110", "notes": "any - 60 - only til end of Sept then back to Ont"}, {"line": "12", "added": "8/26", "name": "Denis Theriault", "phone": "506-555-0111", "notes": "not Thurs, anyone but Dave - 1hr - after 3:30 (work)"}, {"line": "13", "added": "Aug 28", "name": "Kim Belliveau", "phone": "506-555-0112", "notes": "female only - 60 - after 4"}, {"line": "14", "added": "8/29", "name": "Chantal Maltais", "phone": "(506)555-0113", "notes": "post-op shoulder (rotator cuff Aug 3) - Josée only - 45 or 60 - needs 3h, drives in from Shediac"}, {"line": "15", "added": "Aug 30", "name": "Mel Arsenault", "phone": "506-555-0114", "notes": "any - 60 - same day ok"}, {"line": "16", "added": "8/31", "name": "Carole Mazerolle", "phone": "506-555-0115", "notes": "Josée - 60 - hip replacement July"}, {"line": "17", "added": "Sept 1", "name": "Brianne Cyr", "phone": "506-555-0116", "notes": "wants one before wedding Oct 3 - any female - 90"}, {"line": "18", "added": "9/2", "name": "Marcel Bujold", "phone": "506-555-0117", "notes": "Marc's reg, wants an extra - Marc only - AM - can come in 30 min, retired"}, {"line": "19", "added": "Sept 3", "name": "Jen LeBlanc", "phone": "506-555-0118", "notes": "any - 60 - mornings"}, {"line": "20", "added": "9/4", "name": "Ginette Losier", "phone": "506-555-0119", "notes": "fibro - light pressure!! - female only - 60 - Tues/Thurs"}, {"line": "21", "added": "Sept 5", "name": "Bob Gaudet", "phone": "506 555 0120", "notes": "1hr - not Marc (neighbour) - can come quick, 1hr"}, {"line": "22", "added": "9/7", "name": "Luc Bernard", "phone": "506-555-0121", "notes": "any - 1hr - away hunting til Oct 9"}, {"line": "23", "added": "Sept 8", "name": "Dan Robichaud", "phone": "506-555-0122", "notes": "any - 60 - Sat only. moved to Hfx?? Kelsey says"}, {"line": "24", "added": "9/9", "name": "Kevin Steeves", "phone": "506-555-0123", "notes": "any - after 5 (works) - TEXT don't call"}, {"line": "25", "added": "Sept 10", "name": "Steph Poirier", "phone": "506-555-0124", "notes": "Kelsey only - Tues - 1hr"}, {"line": "26", "added": "9/11", "name": "Amanda Bourgeois", "phone": "506-555-0125", "notes": "MVA claim, ins pays - Rachel or Josée - 1hr"}, {"line": "27", "added": "Sept 12", "name": "Sylvie Bordage", "phone": "506-555-0126", "notes": "Rachel - 60 - next day only (shift work)"}, {"line": "28", "added": "9/14", "name": "Yvon Allain", "phone": "506-555-0127", "notes": "any - 90 only - Sat"}, {"line": "29", "added": "Sept 15", "name": "Anne-Marie Leger", "phone": "506-555-0128", "notes": "Amira - TMJ - 45. called 10/9, going to someone in Dieppe now, take off"}, {"line": "30", "added": "9/16", "name": "Tina Saulnier", "phone": "506-555-0129", "notes": "Kelsey or Amira - 1hr"}, {"line": "31", "added": "Sept 17", "name": "Claudette R", "phone": "same #", "notes": "60 ok too"}, {"line": "32", "added": "9/18", "name": "Mike Goguen", "phone": "506-555-0130", "notes": "any - after 4 - here til Oct 10 (contract at the hospital)"}, {"line": "33", "added": "Sept 19", "name": "Patrick Chiasson", "phone": "506-555-0131", "notes": "AB Dave - not Mon - 1hr - AM"}, {"line": "34", "added": "9/21", "name": "Brianne Cyr", "phone": "506-555-0116", "notes": "again!! wedding is Sat the 3rd, any time"}, {"line": "35", "added": "Sept 22", "name": "Jennifer Leblanc", "phone": "506-555-0118", "notes": "called again, mornings still"}, {"line": "36", "added": "9/22", "name": "Monique Hache", "phone": "506-555-0132", "notes": "migraines - Amira only - 45 - not before 10"}, {"line": "37", "added": "Sept 24", "name": "Greg Wilson", "phone": "506-555-0133", "notes": "NEW client (intake form) - any - Fri only after 3"}, {"line": "38", "added": "9/25", "name": "Rita McGraw", "phone": "506-555-0134", "notes": "Rachel only - evenings after 6 - 1hr"}, {"line": "39", "added": "Sept 28", "name": "Joel Bertin", "phone": "506-555-0135", "notes": "any - 30 or 45 - on his lunch 12-1 only - 30 min notice ok, works at the bank across the st"}, {"line": "40", "added": "9/29", "name": "Vanessa Caissie", "phone": "506-555-0136", "notes": "pregnant 30 wks - Amira pref - needs 2-3 hrs"}, {"line": "41", "added": "Sept 30", "name": "Ron Babin", "phone": "506-555-0137", "notes": "Dave only - 90"}, {"line": "42", "added": "9/30", "name": "Amanda B.", "phone": "506-555-0125", "notes": "can do 90 if ins ok's it. still R/J"}, {"line": "43", "added": "Oct 1", "name": "Tina S", "phone": "506-555-0129", "notes": "called - has to be done by 2:30 (school pickup)"}, {"line": "44", "added": "10/1", "name": "Mireille Cole", "phone": "506-555-0138", "notes": "any - 60 - AM - text only (shift worker)"}, {"line": "45", "added": "Oct 2", "name": "Nicole Vautour", "phone": "506-555-0139", "notes": "Josée or Amira - 60 - not Fri - concussion (MVA), light only"}, {"line": "46", "added": "10/3", "name": "Shawn Duguay", "phone": "506-555-0140", "notes": "Marc or Dave - 1hr - hockey, hamstring"}, {"line": "47", "added": "Oct 5", "name": "Normand V", "phone": "506-555-0104", "notes": "again. Dave. 90 or 60 fine. after 4"}, {"line": "48", "added": "10/6", "name": "Carole M", "phone": "506-555-0115", "notes": "Jos or Rachel ok now - AM only"}, {"line": "49", "added": "Oct 6", "name": "Andrea Pitre", "phone": "506-555-0141", "notes": "any female - 45 - Wed or Fri - needs 4 hrs (2 kids)"}, {"line": "50", "added": "10/7", "name": "Kim Belliveau", "phone": "506-555-0112", "notes": "tried 2x, # not in service??"}, {"line": "51", "added": "Oct 8", "name": "Pauline B.", "phone": "506-555-0102", "notes": "called back - still wants in. Mon or Wed AM only now"}, {"line": "52", "added": "10/8", "name": "Helene Surette", "phone": "506-555-0142", "notes": "cancer survivor, no deep - Kelsey or Josée - 60 - Wed/Fri"}, {"line": "53", "added": "Oct 9", "name": "Luc B", "phone": "506-555-0121", "notes": "back now. wants 90 if poss, 60 ok. not Sat"}, {"line": "54", "added": "10/9", "name": "Brent Coates", "phone": "506-555-0143", "notes": "any but Dave - 90 - after 4"}, {"line": "55", "added": "Oct 10", "name": "Sylvie B", "phone": "506-555-0126", "notes": "still waiting - Rachel or Amira"}, {"line": "56", "added": "10/13", "name": "Lorraine Johnson", "phone": "506-555-0106", "notes": "called again - still Amira, Mon or Tues"}, {"line": "57", "added": "Oct 13", "name": "Lise Gautreau", "phone": "506-555-0144", "notes": "Dave or Jos - afternoons - can come in 2 hrs"}, {"line": "58", "added": "10/14", "name": "Ron Babin", "phone": "506-555-0137", "notes": "again - Dave - 90 - Tues or Fri only now (new shifts)"}, {"line": "59", "added": "Oct 15", "name": "Jordan Ouellette", "phone": "506-555-0145", "notes": "any - 45 - Mon/Tues after 5 - can come in an hour"}, {"line": "60", "added": "10/19", "name": "Mireille Cole", "phone": "506-555-0138", "notes": "sorry, add: not Thurs"}], "names": ["Amanda B.", "Amanda Bourgeois", "Andrea Pitre", "Anne-Marie Leger", "Bob Gaudet", "Brent Coates", "Brianne Cyr", "Carole M", "Carole Mazerolle", "Chantal Maltais", "Claudette R", "Claudette Richard", "Dan Robichaud", "Denis Theriault", "Ginette Losier", "Gisele Maillet", "Greg Wilson", "Heather Doucet", "Helene Surette", "Hélène Surette", "Jen LeBlanc", "Jennifer Leblanc", "Joel Bertin", "Jordan Ouellette", "Joël Bertin", "Kevin Steeves", "Kim Belliveau", "Lise Gautreau", "Lorraine Johnson", "Luc B", "Luc Bernard", "Lynn S.", "Lynn Savoie", "Marcel Bujold", "Mel Arsenault", "Mike Goguen", "Mireille Cole", "Monique Hache", "Monique Haché", "Nicole Vautour", "Normand V", "Normand Vienneau", "Patrick Chiasson", "Pauline B.", "Pauline Bastarache", "Ray Daigle", "Rita McGraw", "Ron Babin", "Sarah Collette", "Shawn Duguay", "Steph Poirier", "Sylvie B", "Sylvie Bordage", "Terry Hebert", "Tina S", "Tina Saulnier", "Vanessa Caissie", "Yvon Allain"], "typing": [{"added": "Oct 10", "name": "Sylvie B", "phone": "506-555-0126", "notes": "still waiting - Rachel or Amira"}, {"added": "10/13", "name": "Lorraine Johnson", "phone": "506-555-0106", "notes": "called again - still Amira, Mon or Tues"}, {"added": "Oct 13", "name": "Lise Gautreau", "phone": "506-555-0144", "notes": "Dave or Jos - afternoons - can come in 2 hrs"}, {"added": "10/14", "name": "Ron Babin", "phone": "506-555-0137", "notes": "again - Dave - 90 - Tues or Fri only now (new shifts)"}, {"added": "Oct 15", "name": "Jordan Ouellette", "phone": "506-555-0145", "notes": "any - 45 - Mon/Tues after 5 - can come in an hour"}, {"added": "10/19", "name": "Mireille Cole", "phone": "506-555-0138", "notes": "sorry, add: not Thurs"}]};
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fold = (s) => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z\- ]/g, "").trim();
+const log = [];          // {round, id, category, seconds, answer, right, tanya}
+let typingResult = null;
+let tick = null;
+
+function startClock() {
+  const t0 = performance.now();
+  clearInterval(tick);
+  tick = setInterval(() => { const el = $("#clock"); if (el) el.textContent = ((performance.now() - t0) / 1000).toFixed(1) + " s"; }, 100);
+  return t0;
+}
+
+function intro() {
+  $("#app").innerHTML = `
+  <h1>Timed test: how long to know who to call</h1>
+  <p class="mut">10 sample openings, picked with a fixed random seed (${D.seed}), two of each kind: nobody fits · a Josée opening · only 1–2 fit · many fit · a clinic rule applies. One of each pair is in each round.</p>
+  <div class="card"><h2>How it works</h2>
+  <ol>
+    <li><b>Round 1, the book (5 openings).</b> You see the opening and the waitlist exactly as typed from the green book. Find the <b>first person you would call</b>, or "Nobody fits". The clock runs from "Show opening" until you press Submit.</li>
+    <li><b>Round 2, the tool (5 other openings).</b> You see what the tool shows for the opening. Same task: name the first person you would call.</li>
+    <li>Each answer is checked against Tanya's own list for that opening. Answer as you would at the desk; don't look anything up elsewhere.</li>
+    <li>Optional part 3: type the book's 6 newest lines, to time the weekly upkeep.</li>
+  </ol>
+  <p class="small mut">Who is testing matters: write it down below. Someone who doesn't know the clients is like Bethany on Saturdays.</p>
+  <div class="answer"><input id="who" placeholder="Who is testing (e.g. Neo, classmate)"><button class="primary" id="go">Start round 1</button></div></div>`;
+  $("#go").onclick = () => { window.tester = $("#who").value.trim() || "not given"; question(1, 0); };
+}
+
+const RULES = `<div class="rules"><b>Today is Wed Oct 21, 2026</b> (the date of the list). <b>Tanya's rules:</b> start at line 1 ("they asked first"). No length written = 60 min. No notice written = about 2 hours. A newer line for the same person (same phone, or "same #") replaces the older one. More than 2 months since their last line = gone. Pregnant clients only with Amira or Kelsey. Post-op usually Josée. Notice = time from the cancellation to the start.</div>`;
+
+function opening(q) {
+  return `<div class="op"><span class="big">${esc(q.when)}</span><span><b>${esc(q.therapist)}</b> · ${q.length} min</span><span class="mut">cancelled ${esc(q.cancelled)} · ${q.notice_h} h notice</span></div>`;
+}
+
+function answerBox() {
+  return `<div class="answer"><input id="ans" list="names" placeholder="First person to call, or Nobody fits" autocomplete="off">
+    <datalist id="names"><option value="Nobody fits">${D.names.map((n) => `<option value="${esc(n)}">`).join("")}</datalist>
+    <button class="ghost" id="nobody">Nobody fits</button><button class="primary" id="submit">Submit</button></div>`;
+}
+
+function question(round, i) {
+  const qs = D.rounds[round];
+  if (i >= qs.length) { if (round === 1) return between(); return typingIntro(); }
+  const q = qs[i];
+  $("#app").innerHTML = `<div class="bar" style="justify-content:space-between"><h1>Round ${round}: ${round === 1 ? "the book" : "the tool"} · ${i + 1} of ${qs.length}</h1><span class="clock" id="clock">0.0 s</span></div>
+    <div class="card" id="qcard"><p class="mut">Press "Show opening" when ready. The clock starts then.</p><button class="primary" id="show">Show opening</button></div>`;
+  $("#show").onclick = () => {
+    const t0 = startClock();
+    let body = `<div class="card">${opening(q)}${answerBox()}</div>`;
+    if (round === 1) {
+      body += `<div class="card">${RULES}<div class="book" style="margin-top:10px"><table><tr><th>line</th><th>added</th><th>name</th><th>phone</th><th>notes</th></tr>` +
+        D.book.map((r) => `<tr><td>${esc(r.line)}</td><td>${esc(r.added)}</td><td>${esc(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.notes)}</td></tr>`).join("") + `</table></div></div>`;
+    } else {
+      const s = q.tool.shown, f = q.tool.funnel;
+      body += `<div class="card"><p class="small mut">${f.total} in the book → ${f.waiting} still waiting → ${f.fit} fit this opening → ${f.shown} to call</p>` +
+        (s.length ? s.map((p, k) => `<div class="p ${k ? "later" : "now"}">${k ? "" : '<span class="lab">Call this one now</span>'}<span class="rk">${k + 1}</span><span class="nm">${esc(p.name)}</span><span class="ph">${esc(p.phone)}</span><ul class="chks">${p.checks.map((c) => `<li>✓ ${esc(c[0])}: ${esc(c[1])} · this: ${esc(c[2])}</li>`).join("")}</ul></div>`).join("")
+          : `<div class="none">Nobody on the list fits this one.</div>`) + `</div>`;
+    }
+    $("#qcard").outerHTML = body;
+    $("#ans").focus();
+    const done = (val) => {
+      const v = (val || $("#ans").value).trim();
+      if (!v) { $("#ans").focus(); return; }
+      const secs = (performance.now() - t0) / 1000;
+      clearInterval(tick);
+      const nobody = fold(v) === "nobody fits" || fold(v) === "nobody";
+      const want = q.tanya.map(fold);
+      const right = want.length ? (!nobody && want.includes(fold(v))) : nobody;
+      log.push({ round, id: q.id, category: q.category, seconds: +secs.toFixed(1), answer: nobody ? "Nobody fits" : v, right, tanya: q.tanya.length ? q.tanya.join("; ") : "nobody" });
+      question(round, i + 1);
+    };
+    $("#submit").onclick = () => done();
+    $("#nobody").onclick = () => done("Nobody fits");
+    $("#ans").addEventListener("keydown", (e) => { if (e.key === "Enter") done(); });
+  };
+}
+
+function between() {
+  $("#app").innerHTML = `<h1>Round 1 done</h1><div class="card"><p>Next: 5 other openings, this time with the tool. Same task.</p><button class="primary" id="go">Start round 2</button></div>`;
+  $("#go").onclick = () => question(2, 0);
+}
+
+function typingIntro() {
+  $("#app").innerHTML = `<h1>Optional part 3: weekly upkeep</h1>
+  <div class="card"><p>On Fridays Tanya would type the week's new lines from the green book into the waitlist sheet (about 6 a week). Here are the book's 6 newest lines. Press Start, type them into the box (one line each, any layout: date, name, phone, note), then press Done.</p>
+  <div class="bar"><button class="primary" id="start">Start typing test</button><button class="ghost" id="skip">Skip to results</button></div></div>`;
+  $("#skip").onclick = results;
+  $("#start").onclick = () => {
+    $("#app").innerHTML = `<div class="bar" style="justify-content:space-between"><h1>Type these 6 lines</h1><span class="clock" id="clock">0.0 s</span></div>
+      <div class="card"><table><tr><th>added</th><th>name</th><th>phone</th><th>notes</th></tr>${D.typing.map((r) => `<tr><td>${esc(r.added)}</td><td>${esc(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.notes)}</td></tr>`).join("")}</table></div>
+      <div class="card"><textarea id="typed" placeholder="Type here"></textarea><div class="bar" style="margin-top:10px"><button class="primary" id="done">Done</button></div></div>`;
+    const t0 = startClock();
+    $("#typed").focus();
+    $("#done").onclick = () => {
+      clearInterval(tick);
+      const lines = $("#typed").value.split(/\n/).filter((l) => l.trim()).length;
+      typingResult = { seconds: +((performance.now() - t0) / 1000).toFixed(1), lines };
+      results();
+    };
+  };
+}
+
+function stats(rs) {
+  const s = rs.map((x) => x.seconds).sort((a, b) => a - b);
+  const mean = s.reduce((a, b) => a + b, 0) / (s.length || 1);
+  const med = s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : 0;
+  return { n: s.length, mean: +mean.toFixed(1), median: +med.toFixed(1), right: rs.filter((x) => x.right).length };
+}
+
+function results() {
+  const a = stats(log.filter((x) => x.round === 1)), b = stats(log.filter((x) => x.round === 2));
+  const summary = `Timed test (${new Date().toISOString().slice(0, 10)}, tester: ${window.tester}, seed ${D.seed})\n` +
+    `Without the tool (the book): average ${a.mean} s, median ${a.median} s, ${a.right} of ${a.n} right\n` +
+    `With the tool: average ${b.mean} s, median ${b.median} s, ${b.right} of ${b.n} right\n` +
+    (typingResult ? `Weekly upkeep: typed ${typingResult.lines} lines in ${typingResult.seconds} s (${(typingResult.seconds / 60).toFixed(1)} min)\n` : "") +
+    `\nround\topening\tkind\tseconds\tanswer\tright\tTanya's list\n` +
+    log.map((x) => [x.round === 1 ? "book" : "tool", x.id, x.category, x.seconds, x.answer, x.right ? "yes" : "no", x.tanya].join("\t")).join("\n");
+  $("#app").innerHTML = `<h1>Results</h1>
+    <div class="card"><table><tr><th></th><th>Average</th><th>Median</th><th>Right (Tanya's list)</th></tr>
+    <tr><td><b>Without the tool</b> (the book)</td><td>${a.mean} s</td><td>${a.median} s</td><td>${a.right} of ${a.n}</td></tr>
+    <tr><td><b>With the tool</b></td><td>${b.mean} s</td><td>${b.median} s</td><td>${b.right} of ${b.n}</td></tr>
+    ${typingResult ? `<tr><td><b>Weekly upkeep</b> (typing ${typingResult.lines} lines)</td><td colspan="3">${typingResult.seconds} s (${(typingResult.seconds / 60).toFixed(1)} min)</td></tr>` : ""}</table></div>
+    <div class="card"><table><tr><th>Round</th><th>Opening</th><th>Kind</th><th>Seconds</th><th>Answer</th><th>Right?</th><th>Tanya's list</th></tr>
+    ${log.map((x) => `<tr><td>${x.round === 1 ? "book" : "tool"}</td><td>${x.id}</td><td>${esc(x.category)}</td><td>${x.seconds}</td><td>${esc(x.answer)}</td><td class="${x.right ? "ok" : "no"}">${x.right ? "yes" : "no"}</td><td>${esc(x.tanya)}</td></tr>`).join("")}</table></div>
+    <div class="card"><h2>Copy this into the chat</h2><pre id="sum">${esc(summary)}</pre><button class="primary" id="copy">Copy</button> <span class="small mut" id="copied"></span></div>`;
+  $("#copy").onclick = () => {
+    const done = () => { $("#copied").textContent = "Copied."; };
+    if (navigator.clipboard) navigator.clipboard.writeText(summary).then(done, () => { selectPre(); });
+    else selectPre();
+  };
+  function selectPre() { const r = document.createRange(); r.selectNodeContents($("#sum")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("#copied").textContent = "Selected: press Ctrl+C."; }
+}
+
+intro();
+</script>
+</body>
+</html>

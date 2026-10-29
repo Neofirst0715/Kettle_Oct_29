@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Late openings, who to call</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div><h1>Late openings: who to call</h1>
+<p class="lead" id="lead">Kettle &amp; Stone · runs on this computer only. Nothing is sent anywhere.</p></div></header>
+<noscript><p class="noscript">This page needs a normal web browser such as Chrome or Edge, with scripts allowed.</p></noscript>
+<div class="tools">
+  <div class="left">
+    <div><label for="today">Day of use</label><input id="today" type="date"></div>
+    <div><label>&nbsp;</label><button id="refresh" class="ghost">Refresh</button></div>
+  </div>
+  <div><p class="segcap">Who gets the first call</p><div class="seg"><button data-order="asked" class="on">Asked first</button><button data-order="fast">Fastest to arrive</button></div></div>
+</div>
+<div class="warnbox" id="warn" hidden></div>
+<p class="files" id="files"></p>
+<div class="state" id="state"><div>Loading…</div></div>
+<div id="results" hidden>
+  <div class="app"><nav class="list" id="list"></nav><section class="panel" id="panel"></section></div>
+  <div class="foot">
+    <details><summary>Needs a look before use (<span id="reviewN">0</span>)</summary><p>Notes the rules could not read. These people are never shown until someone rewrites the note.</p><ul id="review"></ul></details>
+    <details><summary>Cross these off the book (<span id="oldN">0</span>)</summary><p>Out of date: booked since asking, no contact for over two months, moved, or asked to come off.</p><ul id="old"></ul></details>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

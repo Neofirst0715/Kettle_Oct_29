@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline';">
+<title>Timed test</title>
+<style>
+:root{--bg:#f7f3ec;--card:#fffdf9;--ink:#26302c;--mut:#7a837e;--line:#e9e2d4;--acc:#35665a;--accbg:#e6efe9;--warm:#b96a3b;--warmbg:#f8e9dc;--bad:#a1302e}
+@media(prefers-color-scheme:dark){:root{--bg:#141817;--card:#1c2220;--ink:#ebefec;--mut:#8d9993;--line:#2c3532;--acc:#7cc4b0;--accbg:#22322d;--warm:#e3a070;--warmbg:#352a21;--bad:#e27a77}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+h1{font-size:1.5rem;margin:0 0 4px}h2{font-size:1.15rem;margin:0 0 8px}
+.mut{color:var(--mut)}.small{font-size:.86rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin:14px 0}
+button{font:inherit;cursor:pointer}
+.primary{border:0;background:var(--acc);color:var(--bg);padding:10px 22px;border-radius:999px;font-weight:650}
+.ghost{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.clock{font-variant-numeric:tabular-nums;font-size:1.6rem;font-weight:650;min-width:4.5em}
+.op{display:flex;gap:24px;flex-wrap:wrap;align-items:baseline}
+.op .big{font-size:1.5rem;font-weight:650}
+.answer{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+.answer input{font:inherit;padding:9px 12px;border:1px solid var(--line);border-radius:10px;min-width:280px;background:var(--bg);color:var(--ink)}
+.rules{background:var(--bg);border-radius:12px;padding:10px 14px;font-size:.86rem;color:var(--mut)}
+.rules b{color:var(--ink)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:600;position:sticky;top:0;background:var(--card)}
+.book{max-height:58vh;overflow:auto;border:1px solid var(--line);border-radius:12px}
+.p{display:grid;grid-template-columns:34px 1fr auto;gap:2px 12px;align-items:center;padding:12px 14px;border-radius:12px;margin-bottom:8px;border:1px solid var(--line)}
+.p.now{background:var(--accbg);border-color:var(--acc)}.p.later{opacity:.6}
+.rk{width:28px;height:28px;border-radius:50%;background:var(--card);color:var(--acc);font-weight:650;display:grid;place-items:center}
+.lab{grid-column:1/4;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--acc);font-weight:650}
+.nm{font-weight:650;font-size:1.15rem}.ph{font-variant-numeric:tabular-nums}
+.chks{grid-column:2/4;list-style:none;margin:4px 0 0;padding:0;font-size:.84rem;color:var(--mut)}
+.none{padding:14px;border:1px solid var(--line);border-radius:12px;color:var(--mut)}
+.ok{color:var(--acc);font-weight:650}.no{color:var(--bad);font-weight:650}
+textarea{width:100%;min-height:180px;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+pre{white-space:pre-wrap;background:var(--bg);padding:12px;border-radius:12px;font-size:.84rem}
+</style>
+</head>
+<body>
+<main id="app"><noscript>This page needs Chrome or Edge with scripts allowed.</noscript></main>
+<script>
+const D = /*DATA*/null;
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fold = (s) => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z\- ]/g, "").trim();
+const log = [];          // {round, id, category, seconds, answer, right, tanya}
+let typingResult = null;
+let tick = null;
+
+function startClock() {
+  const t0 = performance.now();
+  clearInterval(tick);
+  tick = setInterval(() => { const el = $("#clock"); if (el) el.textContent = ((performance.now() - t0) / 1000).toFixed(1) + " s"; }, 100);
+  return t0;
+}
+
+function intro() {
+  $("#app").innerHTML = `
+  <h1>Timed test: how long to know who to call</h1>
+  <p class="mut">10 sample openings, picked with a fixed random seed (${D.seed}), two of each kind: nobody fits · a Josée opening · only 1–2 fit · many fit · a clinic rule applies. One of each pair is in each round.</p>
+  <div class="card"><h2>How it works</h2>
+  <ol>
+    <li><b>Round 1, the book (5 openings).</b> You see the opening and the waitlist exactly as typed from the green book. Find the <b>first person you would call</b>, or "Nobody fits". The clock runs from "Show opening" until you press Submit.</li>
+    <li><b>Round 2, the tool (5 other openings).</b> You see what the tool shows for the opening. Same task: name the first person you would call.</li>
+    <li>Each answer is checked against Tanya's own list for that opening. Answer as you would at the desk; don't look anything up elsewhere.</li>
+    <li>Optional part 3: type the book's 6 newest lines, to time the weekly upkeep.</li>
+  </ol>
+  <p class="small mut">Who is testing matters: write it down below. Someone who doesn't know the clients is like Bethany on Saturdays.</p>
+  <div class="answer"><input id="who" placeholder="Who is testing (e.g. Neo, classmate)"><button class="primary" id="go">Start round 1</button></div></div>`;
+  $("#go").onclick = () => { window.tester = $("#who").value.trim() || "not given"; question(1, 0); };
+}
+
+const RULES = `<div class="rules"><b>Today is Wed Oct 21, 2026</b> (the date of the list). <b>Tanya's rules:</b> start at line 1 ("they asked first"). No length written = 60 min. No notice written = about 2 hours. A newer line for the same person (same phone, or "same #") replaces the older one. More than 2 months since their last line = gone. Pregnant clients only with Amira or Kelsey. Post-op usually Josée. Notice = time from the cancellation to the start.</div>`;
+
+function opening(q) {
+  return `<div class="op"><span class="big">${esc(q.when)}</span><span><b>${esc(q.therapist)}</b> · ${q.length} min</span><span class="mut">cancelled ${esc(q.cancelled)} · ${q.notice_h} h notice</span></div>`;
+}
+
+function answerBox() {
+  return `<div class="answer"><input id="ans" list="names" placeholder="First person to call, or Nobody fits" autocomplete="off">
+    <datalist id="names"><option value="Nobody fits">${D.names.map((n) => `<option value="${esc(n)}">`).join("")}</datalist>
+    <button class="ghost" id="nobody">Nobody fits</button><button class="primary" id="submit">Submit</button></div>`;
+}
+
+function question(round, i) {
+  const qs = D.rounds[round];
+  if (i >= qs.length) { if (round === 1) return between(); return typingIntro(); }
+  const q = qs[i];
+  $("#app").innerHTML = `<div class="bar" style="justify-content:space-between"><h1>Round ${round}: ${round === 1 ? "the book" : "the tool"} · ${i + 1} of ${qs.length}</h1><span class="clock" id="clock">0.0 s</span></div>
+    <div class="card" id="qcard"><p class="mut">Press "Show opening" when ready. The clock starts then.</p><button class="primary" id="show">Show opening</button></div>`;
+  $("#show").onclick = () => {
+    const t0 = startClock();
+    let body = `<div class="card">${opening(q)}${answerBox()}</div>`;
+    if (round === 1) {
+      body += `<div class="card">${RULES}<div class="book" style="margin-top:10px"><table><tr><th>line</th><th>added</th><th>name</th><th>phone</th><th>notes</th></tr>` +
+        D.book.map((r) => `<tr><td>${esc(r.line)}</td><td>${esc(r.added)}</td><td>${esc(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.notes)}</td></tr>`).join("") + `</table></div></div>`;
+    } else {
+      const s = q.tool.shown, f = q.tool.funnel;
+      body += `<div class="card"><p class="small mut">${f.total} in the book → ${f.waiting} still waiting → ${f.fit} fit this opening → ${f.shown} to call</p>` +
+        (s.length ? s.map((p, k) => `<div class="p ${k ? "later" : "now"}">${k ? "" : '<span class="lab">Call this one now</span>'}<span class="rk">${k + 1}</span><span class="nm">${esc(p.name)}</span><span class="ph">${esc(p.phone)}</span><ul class="chks">${p.checks.map((c) => `<li>✓ ${esc(c[0])}: ${esc(c[1])} · this: ${esc(c[2])}</li>`).join("")}</ul></div>`).join("")
+          : `<div class="none">Nobody on the list fits this one.</div>`) + `</div>`;
+    }
+    $("#qcard").outerHTML = body;
+    $("#ans").focus();
+    const done = (val) => {
+      const v = (val || $("#ans").value).trim();
+      if (!v) { $("#ans").focus(); return; }
+      const secs = (performance.now() - t0) / 1000;
+      clearInterval(tick);
+      const nobody = fold(v) === "nobody fits" || fold(v) === "nobody";
+      const want = q.tanya.map(fold);
+      const right = want.length ? (!nobody && want.includes(fold(v))) : nobody;
+      log.push({ round, id: q.id, category: q.category, seconds: +secs.toFixed(1), answer: nobody ? "Nobody fits" : v, right, tanya: q.tanya.length ? q.tanya.join("; ") : "nobody" });
+      question(round, i + 1);
+    };
+    $("#submit").onclick = () => done();
+    $("#nobody").onclick = () => done("Nobody fits");
+    $("#ans").addEventListener("keydown", (e) => { if (e.key === "Enter") done(); });
+  };
+}
+
+function between() {
+  $("#app").innerHTML = `<h1>Round 1 done</h1><div class="card"><p>Next: 5 other openings, this time with the tool. Same task.</p><button class="primary" id="go">Start round 2</button></div>`;
+  $("#go").onclick = () => question(2, 0);
+}
+
+function typingIntro() {
+  $("#app").innerHTML = `<h1>Optional part 3: weekly upkeep</h1>
+  <div class="card"><p>On Fridays Tanya would type the week's new lines from the green book into the waitlist sheet (about 6 a week). Here are the book's 6 newest lines. Press Start, type them into the box (one line each, any layout: date, name, phone, note), then press Done.</p>
+  <div class="bar"><button class="primary" id="start">Start typing test</button><button class="ghost" id="skip">Skip to results</button></div></div>`;
+  $("#skip").onclick = results;
+  $("#start").onclick = () => {
+    $("#app").innerHTML = `<div class="bar" style="justify-content:space-between"><h1>Type these 6 lines</h1><span class="clock" id="clock">0.0 s</span></div>
+      <div class="card"><table><tr><th>added</th><th>name</th><th>phone</th><th>notes</th></tr>${D.typing.map((r) => `<tr><td>${esc(r.added)}</td><td>${esc(r.name)}</td><td>${esc(r.phone)}</td><td>${esc(r.notes)}</td></tr>`).join("")}</table></div>
+      <div class="card"><textarea id="typed" placeholder="Type here"></textarea><div class="bar" style="margin-top:10px"><button class="primary" id="done">Done</button></div></div>`;
+    const t0 = startClock();
+    $("#typed").focus();
+    $("#done").onclick = () => {
+      clearInterval(tick);
+      const lines = $("#typed").value.split(/\n/).filter((l) => l.trim()).length;
+      typingResult = { seconds: +((performance.now() - t0) / 1000).toFixed(1), lines };
+      results();
+    };
+  };
+}
+
+function stats(rs) {
+  const s = rs.map((x) => x.seconds).sort((a, b) => a - b);
+  const mean = s.reduce((a, b) => a + b, 0) / (s.length || 1);
+  const med = s.length ? (s.length % 2 ? s[(s.length - 1) / 2] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : 0;
+  return { n: s.length, mean: +mean.toFixed(1), median: +med.toFixed(1), right: rs.filter((x) => x.right).length };
+}
+
+function results() {
+  const a = stats(log.filter((x) => x.round === 1)), b = stats(log.filter((x) => x.round === 2));
+  const summary = `Timed test (${new Date().toISOString().slice(0, 10)}, tester: ${window.tester}, seed ${D.seed})\n` +
+    `Without the tool (the book): average ${a.mean} s, median ${a.median} s, ${a.right} of ${a.n} right\n` +
+    `With the tool: average ${b.mean} s, median ${b.median} s, ${b.right} of ${b.n} right\n` +
+    (typingResult ? `Weekly upkeep: typed ${typingResult.lines} lines in ${typingResult.seconds} s (${(typingResult.seconds / 60).toFixed(1)} min)\n` : "") +
+    `\nround\topening\tkind\tseconds\tanswer\tright\tTanya's list\n` +
+    log.map((x) => [x.round === 1 ? "book" : "tool", x.id, x.category, x.seconds, x.answer, x.right ? "yes" : "no", x.tanya].join("\t")).join("\n");
+  $("#app").innerHTML = `<h1>Results</h1>
+    <div class="card"><table><tr><th></th><th>Average</th><th>Median</th><th>Right (Tanya's list)</th></tr>
+    <tr><td><b>Without the tool</b> (the book)</td><td>${a.mean} s</td><td>${a.median} s</td><td>${a.right} of ${a.n}</td></tr>
+    <tr><td><b>With the tool</b></td><td>${b.mean} s</td><td>${b.median} s</td><td>${b.right} of ${b.n}</td></tr>
+    ${typingResult ? `<tr><td><b>Weekly upkeep</b> (typing ${typingResult.lines} lines)</td><td colspan="3">${typingResult.seconds} s (${(typingResult.seconds / 60).toFixed(1)} min)</td></tr>` : ""}</table></div>
+    <div class="card"><table><tr><th>Round</th><th>Opening</th><th>Kind</th><th>Seconds</th><th>Answer</th><th>Right?</th><th>Tanya's list</th></tr>
+    ${log.map((x) => `<tr><td>${x.round === 1 ? "book" : "tool"}</td><td>${x.id}</td><td>${esc(x.category)}</td><td>${x.seconds}</td><td>${esc(x.answer)}</td><td class="${x.right ? "ok" : "no"}">${x.right ? "yes" : "no"}</td><td>${esc(x.tanya)}</td></tr>`).join("")}</table></div>
+    <div class="card"><h2>Copy this into the chat</h2><pre id="sum">${esc(summary)}</pre><button class="primary" id="copy">Copy</button> <span class="small mut" id="copied"></span></div>`;
+  $("#copy").onclick = () => {
+    const done = () => { $("#copied").textContent = "Copied."; };
+    if (navigator.clipboard) navigator.clipboard.writeText(summary).then(done, () => { selectPre(); });
+    else selectPre();
+  };
+  function selectPre() { const r = document.createRange(); r.selectNodeContents($("#sum")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("#copied").textContent = "Selected: press Ctrl+C."; }
+}
+
+intro();
+</script>
+</body>
+</html>

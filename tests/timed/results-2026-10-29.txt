@@ -1,0 +1,19 @@
+Timed test (2026-10-29, tester: Neo, seed 20261029)
+Without the tool (the book): average 91.6 s, median 95.6 s, 2 of 5 right
+With the tool: average 6.9 s, median 7.4 s, 5 of 5 right
+Weekly upkeep: typed 6 lines in 190.8 s (3.2 min)
+
+round	opening	kind	seconds	answer	right	Tanya's list
+book	O40	Nobody fits	115	Mel Arsenault	no	nobody
+book	O32	Only 1–2 people fit	179.6	Claudette R	no	Amanda Bourgeois; Andrea Pitre
+book	O42	Many people fit	39	Tina Saulnier	no	Sarah Collette; Vanessa Caissie; Andrea Pitre; Hélène Surette; Luc Bernard
+book	O41	A clinic therapist rule applies	95.6	Shawn Duguay	yes	Joël Bertin; Shawn Duguay; Luc Bernard; Lise Gautreau
+book	O12	A Josée opening	28.8	Carole Mazerolle	yes	Chantal Maltais; Amanda Bourgeois; Nicole Vautour; Carole Mazerolle; Pauline Bastarache; Mireille Cole
+tool	O11	A Josée opening	9.3	Chantal Maltais	yes	Chantal Maltais; Amanda Bourgeois; Andrea Pitre; Hélène Surette; Lise Gautreau
+tool	O30	Only 1–2 people fit	9	Shawn Duguay	yes	Shawn Duguay
+tool	O24	Many people fit	6.8	Lorraine Johnson	yes	Sarah Collette; Monique Haché; Vanessa Caissie; Nicole Vautour; Lorraine Johnson
+tool	O31	Nobody fits	2.1	Nobody fits	yes	nobody
+tool	O18	A clinic therapist rule applies	7.4	Ginette Losier	yes	Ginette Losier; Amanda Bourgeois
+
+Notes: the tester field was left blank on the page; the tester was Neo. During round 1 Neo asked the AI what some shorthand meant (for example "same day ok", "Dave only. 90."), so the book times include that.
+Rehearsal on Neo's Mac from a fresh download, following HOW-TO-RUN: 3 min 19 s to the results page, including the one-time macOS "Open Anyway" step.

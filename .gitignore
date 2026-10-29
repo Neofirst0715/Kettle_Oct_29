@@ -1,0 +1,8 @@
+__pycache__/
+out/
+out2/
+logs/*
+!logs/.gitkeep
+docs/*.jpg
+docs/*.pdf
+docs/doc_tail.txt
